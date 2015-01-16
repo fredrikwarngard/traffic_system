@@ -31,7 +31,8 @@ public class TrafficSystem {
     private int carsLane1Exited = 0;
     private int carsLane2Exited = 0;
     
-    private int time = 0; 
+    private int time = 0;
+    private int noTrafficJamTime = 0;
     
     public TrafficSystem() {
     	readParameters();
@@ -151,19 +152,20 @@ public class TrafficSystem {
 		startLane.putLast(new Car(this.time, whichLane));
 		++carsEntered;
 	    } catch (Lane.OverflowException e) {
+		noTrafficJamTime = time;
 		System.out.println("start lane is full : " + e.toString());
 	    } 
 	}
 	time++;
 	light1.step();
-	light2.step();	
+	light2.step();
     }
 
     /**
      *Prints statistic as described in the method below.
      */
     public void printStatistics() {
-	System.out.println("Time that the simulation ran    : " + time);
+	System.out.println("Time that the simulation ran    : " + ((noTrafficJamTime != 0) ? noTrafficJamTime : time));
 	System.out.println("Steps without a traffic jam     : " + time);
 	System.out.println("Cars that entered the system    : " + carsEntered);
 	System.out.println("Cars that exited the system     : " + carsExited);
