@@ -1,8 +1,8 @@
 /**
- * This class represent a traffic light. It contains a periodTime, which will loop
- * over and over i.e.[0, 1, ... , periodTime-1, 0, 1]. The lights green time is set to a 
- * number in the range of periodTime so that the traffic light car show a green light 0 steps 
- * in a cycle, the full cycle, or anything in between.
+ *This class represent a traffic light. It contains a periodTime, which will loop
+ *over and over i.e.[0, 1, ... , periodTime-1, 0, 1]. The lights green time is set to a 
+ *number in the range of periodTime so that the traffic light car show a green light 0 steps 
+ *in a cycle, the full cycle, or anything in between.
  *
  *@author Fredrik Wärngård
  *@date 2015-01-14
