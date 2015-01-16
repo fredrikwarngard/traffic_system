@@ -3,19 +3,32 @@
  * we may construct a car object, which has the attributes <strong>bornTime
  * </strong>, that tells us when the car was created due to our chosen int-clock,
  * and <strong>dest</strong>, which tells us where the car is going, with a single in.
- *
- * @author Fredrik Wärngård
- * @date 2015-01-14
+ *@author Fredrik Wärngård
+ *@date 2015-01-14
+ *@throws IllegalArgumentException 
  */
 
-public class Car {
 
+public class Car {
     private int bornTime;
     private int dest;
 
     public Car(int bornTime, int dest){
-    	this.bornTime	= bornTime;
-    	this.dest	= dest;
+	try {
+	    if (0 < bornTime && bornTime < TrafficSystem.getTime());
+	    this.bornTime = bornTime;
+	} catch(IllegalArgumentException e) {
+	    System.out.println("Born time of car is not valid : " + e.toString());
+	    
+	}
+	try {
+	    if ((dest % 2) + 1 == dest) {
+		this.dest = dest;
+	    } 
+	} catch(IllegalArgumentException e) {
+		this.dest = (dest % 2 + 1);
+		System.out.println("Destination not 1 or 2, dest set to the modulo of the input : " + e.toString());
+	}
     }
 
     /**
@@ -36,7 +49,7 @@ public class Car {
 
     
     /**
-     * Returns the printed representation for the chosen car.
+     * Returns the printed representation for the chosen car. In this case its destination, from variable <strong>dest</strong>
      * @return The printed representation for the chosen car.
      */
     public String toString() {

@@ -1,3 +1,4 @@
+//import traffic_system.*;
 /**
  *This class will run the simulation, i.e. creating the trafficsystem
  *and run its <strong>step()</strong>-method an input number of times. The number
@@ -17,8 +18,6 @@ public class Simulation {
      *@param args the number of times the loop should be ran.
      */
     public static void main(String [] args) {
-	// Skapar ett TrafficSystem
-	// Utför stegningen, anropar utskriftsmetoder
 	TrafficSystem ts = new TrafficSystem();
 	int simulationLength = Integer.parseInt(args[0]);
 	for(int i = 0; i < simulationLength; i++){

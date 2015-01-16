@@ -31,11 +31,22 @@ public class TrafficSystem {
     private int carsLane1Exited = 0;
     private int carsLane2Exited = 0;
     
-    private int time = 0; 
+    private int time = 0;
+    private int noTrafficJamTime = 0;
     
     public TrafficSystem() {
     	readParameters();
     }
+
+
+    /**
+     *Return the simulations current time, the number of iteration in the simulation, so to speak.
+     *@returns time the simulations current time
+     */
+    public int getTime() {
+	return time;
+    }
+
 
     /**
      *Reads from file with the method <strong>getProperty</strong> from the 
@@ -87,8 +98,7 @@ public class TrafficSystem {
 	    laneToDest1WaitingTime += timeInSystem;
 	    ++carsLane1Exited;
 	    
-	}
-	if (car.getDestination() == 2) {
+	} else if (car.getDestination() == 2) {
 	    laneToDest2WaitingTime += timeInSystem;
 	    ++carsLane2Exited;
 	}
@@ -151,12 +161,13 @@ public class TrafficSystem {
 		startLane.putLast(new Car(this.time, whichLane));
 		++carsEntered;
 	    } catch (Lane.OverflowException e) {
+		noTrafficJamTime = (noTrafficJamTime == 0) ? time : noTrafficJamTime;
 		System.out.println("start lane is full : " + e.toString());
 	    } 
 	}
 	time++;
 	light1.step();
-	light2.step();	
+	light2.step();
     }
 
     /**
@@ -164,7 +175,7 @@ public class TrafficSystem {
      */
     public void printStatistics() {
 	System.out.println("Time that the simulation ran    : " + time);
-	System.out.println("Steps without a traffic jam     : " + time);
+	System.out.println("Steps without a traffic jam     : " + ((noTrafficJamTime != 0) ? noTrafficJamTime : time));
 	System.out.println("Cars that entered the system    : " + carsEntered);
 	System.out.println("Cars that exited the system     : " + carsExited);
 	System.out.println("Cars that took lane number 1    : " + carsLane1Exited);
