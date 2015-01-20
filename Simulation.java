@@ -1,4 +1,3 @@
-//import traffic_system.*;
 /**
  *This class will run the simulation, i.e. creating the trafficsystem
  *and run its <strong>step()</strong>-method an input number of times. The number
@@ -7,8 +6,7 @@
  *loop, the graphic representation of the traffic system will be printed
  *out for each step, giving a presentation of how the system is evolving for 
  *each step.
- *
- *@author frwa3695
+ *@author Fredrik Wärngård
  *@date 2015-01-14
  */
 

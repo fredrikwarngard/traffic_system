@@ -8,7 +8,6 @@ import java.io.*;
  *of the systems "global" time as it set that along with the other parameters 
  *for each class after reading them from input. It has also a method for 
  *printing statistics as well as printing a visual representation of the lanes.
- *
  *@author Fredrik Wärngård
  *@date 2015-01-14
  */
@@ -35,12 +34,12 @@ public class TrafficSystem {
     private int noTrafficJamTime = 0;
     
     public TrafficSystem() {
-    	readParameters();
+    	readParameters("simulation.properties");
     }
 
 
     /**
-     *Return the simulations current time, the number of iteration in the simulation, so to speak.
+     *Return the simulations current time, i.e. the number of iteration in the simulation.
      *@returns time the simulations current time
      */
     public int getTime() {
@@ -54,57 +53,65 @@ public class TrafficSystem {
      *setting up the traffic system. The variables for statistics and time are
      *by default supposed to be set to 0, due to how I chose to construct it.
      *But this can of course be changed by hand.
+     *@param  fileName The input file
      *@throws FileNotFoundException 
      *@throws IOException 
      *@throws IllegalArgumentException 
      */
-    public void readParameters() {
+    public void readParameters(String fileName) {
 	try {
 	    Properties parameters = new Properties();
-	    parameters.load(new FileInputStream("simulation.properties"));
-	    startLane = new Lane(Integer.parseInt(parameters.getProperty("startLane")));
-	    laneToDest1 = new Lane(Integer.parseInt(parameters.getProperty("turnLanes")));
-	    laneToDest2 = new Lane(Integer.parseInt(parameters.getProperty("turnLanes")));
-	    int period = Integer.parseInt(parameters.getProperty("period"));
+	    parameters.load(new FileInputStream(fileName));
+	    //	    startLane   = new Lane(Integer.parseInt(parameters.getProperty("startlane")));
+	    //	    laneToDest1 = new Lane(Integer.parseInt(parameters.getProperty("turnLanes")));
+	    //	    laneToDest2 = new Lane(Integer.parseInt(parameters.getProperty("turnLanes")));
+	    try {
+		startLane   = new Lane(Integer.parseInt(parameters.getProperty("startlane")));
+		laneToDest1 = new Lane(Integer.parseInt(parameters.getProperty("turnLanes")));
+		laneToDest2 = new Lane(Integer.parseInt(parameters.getProperty("turnLanes")));
+	    } catch(IllegalArgumentException e) {
+		System.out.println("This is not an int" + e.toString());
+		System.out.println(e.getMessage());
+	    }
+	    int period  = Integer.parseInt(parameters.getProperty("period"));
 	    int green1  = Integer.parseInt(parameters.getProperty("greenTime1"));
-	    light1 = new Light(period, green1);
-	    int green2 = Integer.parseInt(parameters.getProperty("greenTime2"));
-	    light2 = new Light(period, green2);
+	    light1      = new Light(period, green1);
+	    int green2  = Integer.parseInt(parameters.getProperty("greenTime2"));
+	    light2      = new Light(period, green2);
 	    arrivalIntensity = Integer.parseInt(parameters.getProperty("arrivalIntensity"));
-	    laneChoice = Integer.parseInt(parameters.getProperty("laneChoice"));;
+	    laneChoice  = Integer.parseInt(parameters.getProperty("laneChoice"));;
 	} catch(FileNotFoundException e) {
 	    System.out.println("Finding the file went wrong : " + e.toString());
+	    System.exit(-1);
 	} catch(IOException e) {
 	    System.out.println("Something with the IO went wrong : " + e.toString());
+	    System.exit(-1);
 	} catch(IllegalArgumentException e) {
-	    System.out.println("Light parameters (green > period == not cool) : " + e.toString());
+	    System.out.println("Your inputted argument is bad : " + e.toString());
+	    System.exit(-1);
 	}
     }
     
-    /**
-     *For statistics, this will save data from a car. with the method
-     *<strong>Car.timeInSystem(time)</strong> we will increment the total runtime
-     *variable for all cars through the system with the current cars runtime, and 
-     *also we will increment the same function for the lane that the car just
-     *ran through. Along with that we will also increment the <strong>carsExited</strong> and 
-     *<strong>carsLane1Exited</strong> or <string> carsLane2Exited</strong> variables, as this methods will
-     *be ran when we remove cars from the lane.
-     *@param car the car which data we're trying to extract
-     */
-    private void extractCarData(Car car) {
-	float timeInSystem = car.timeInSystem(time);
-	totalWaitingTime += timeInSystem;
-	if (car.getDestination() == 1) {
-	    laneToDest1WaitingTime += timeInSystem;
-	    ++carsLane1Exited;
-	    
-	} else if (car.getDestination() == 2) {
-	    laneToDest2WaitingTime += timeInSystem;
-	    ++carsLane2Exited;
-	}
-	++carsExited;
-	
-    }
+    //    /**
+    //     *For statistics, this will save data from a car. with the method
+    //     *<strong>Car.timeInSystem(time)</strong> we will increment the total runtime
+    //     *variable for all cars through the system with the current cars runtime, and 
+    //     *also we will increment the same function for the lane that the car just
+    //     *ran through. Along with that we will also increment the <strong>carsExited</strong> and 
+    //     *<strong>carsLane1Exited</strong> or <string> carsLane2Exited</strong> variables, as this methods will
+    //     *be ran when we remove cars from the lane.
+    //     *@param car the car which data we're trying to extract
+    //     */
+    
+    //    private void extractCarData(Car car) {
+    //	float timeInSystem = car.timeInSystem(time);
+    //	totalWaitingTime += timeInSystem;
+    //	if (car.getDestination() == 1) {
+    //	    laneToDest1WaitingTime += timeInSystem;
+    //	} else if (car.getDestination() == 2) {
+    //	    laneToDest2WaitingTime += timeInSystem;
+    //	}
+    //    }
 
     /**
      *Connects the parts for simulating a step through the traffic system. At first we
@@ -120,7 +127,12 @@ public class TrafficSystem {
 	if (laneToDest1.firstCar() != null) {
 	    if (light1.isGreen()) {
 		Car exitCar = laneToDest1.getFirst();
-		extractCarData(exitCar);
+		float timeInSystem = exitCar.timeInSystem(time);
+		totalWaitingTime += timeInSystem;
+		laneToDest1WaitingTime += timeInSystem;
+		//extractCarData(exitCar);
+		++carsLane1Exited;
+		++carsExited;
 	    }
 	}
 	laneToDest1.step();
@@ -128,7 +140,12 @@ public class TrafficSystem {
 	if (laneToDest2.firstCar() != null) {
 	    if (light2.isGreen()) {
 		Car exitCar = laneToDest2.getFirst();
-		extractCarData(exitCar);
+		float timeInSystem = exitCar.timeInSystem(time);
+		totalWaitingTime += timeInSystem;
+		laneToDest2WaitingTime += timeInSystem;
+		//extractCarData(exitCar);
+		++carsLane2Exited;
+		++carsExited;
 	    }
 	}		
 	laneToDest2.step();
@@ -192,12 +209,13 @@ public class TrafficSystem {
 
     // Skriv ut en grafisk representation av kösituationen med hjälp av klassernas toString-metoder
     public void print() {
-	System.out.println("LIGHT        LANE         STARTINGLANE");
-	System.out.print("  " + light1.toString() + "   ");
+	System.out.println("LIGHTS   LANES          STARTINGLANE");
+	System.out.print("L1  " + light1.toString() + "   ");
 	System.out.print(laneToDest1.toString());
 	System.out.println(startLane.toString());
-	System.out.print("  " + light2.toString() + "   ");
+	System.out.print("L2  " + light2.toString() + "   ");
 	System.out.println(laneToDest2.toString());
 	System.out.println("\n");
+	
     }
 }

@@ -1,25 +1,29 @@
 import org.junit.Test;
 import org.junit.Ignore;
-import static org.junit.Assert.*;
-
-//import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class TestLight {
 
-    private Light lightOne = new Light(7, 1);
-    private Light lightTwo = new Light(3, 2);
-    
     @Test
-    public void testLight() {
-	assertTrue(lightOne.isGreen() == true); 
+    public void testIsGreen() {
+	Light lightOne = new Light(7, 1);
+	Light lightTwo = new Light(3, 2);
+    	assertTrue(lightOne.isGreen() == true); 
 	lightOne.step();
 	assertTrue(lightOne.isGreen() == false);
 	lightTwo.step();
 	lightTwo.step();
-	assertEquals(lightTwo.getTime(), 2); 
-	assertTrue(lightTwo.isGreen() == false); 
+    }
+    
+    @Test
+    public void testStep() {
+	Light lightOne = new Light(7, 1);
+	Light lightTwo = new Light(3, 2);
+	lightOne.step();
 	lightTwo.step();
-	assertEquals(lightTwo.getTime(), 0); 
-	assertTrue(lightTwo.isGreen() == true); 
+	lightTwo.step();
+	assertTrue(lightOne.getTime() == 1);
+	assertTrue(lightTwo.getTime() == 2);
     }
 }

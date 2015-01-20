@@ -42,7 +42,7 @@ public class Light {
     }
     
     /**
-     * Returns true if the traffic light is currently green, else false.
+     * Returns true if the traffic light is currently green, else false. 
      * @return Boolean value whether or not  the traffic light is green or not.
      */    
     public boolean isGreen()   {

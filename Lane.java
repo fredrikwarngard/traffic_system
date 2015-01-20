@@ -12,9 +12,16 @@
  *last spot. The class also contains a <strong>toString()</strong>-method.
  */
 
+
 public class Lane {
-    // Undantag som kastas när det inte gick att lägga 
-    // in en ny bil på vägen
+    /**
+     *A new exception class, representing an overflow occurance of something. And
+     *in this class, the overflow of a lane. This overflow exception will be thrown
+     *when the lane is if full to the last spot, meaning no new cars can enter the 
+     *lane. If there is a new car but nowhere to put it result in an overflow. 
+     *@param message The message included will be printed due to the methods of the 
+     *superclass.
+     */
     public static class OverflowException extends RuntimeException {
 	public OverflowException(String message) {
 	    super(message);
@@ -22,10 +29,21 @@ public class Lane {
     }
     
     private Car[] theLane;
-
-    // Konstruerar ett Lane-objekt med plats för n fordon
-    public Lane(int length) {
-    	theLane = new Car[length];
+    
+    /**
+     *The lane is constructed with an input number(int), declaring the length of the lane.
+     *<strong>theLane</strong> above shows the structure of the lane. The spots in the lane
+     *may be inhibited by any Car object.
+     *@param length The number which determines the size of lane, as a positive integer.
+     *@return theLane The newly constructed Car array of length <strong>length</strong>.
+          *@throws IllegalArgumentException In case lane's length is not at least 1.
+     */
+    public Lane(int length) throws IllegalArgumentException {       // ändrades, försökte kasta fel, och det blev 42 nya fel
+	if (0 < length) {
+	    theLane = new Car[length];
+	} else {
+	    throw new IllegalArgumentException("Lane must be of at least length 1.");
+	}
     }
 
     /**
@@ -66,6 +84,16 @@ public class Lane {
     }
 
     /**
+     *Get a car from any position in the lane
+     *@param index The position of the car in the lane.
+     *@returns the Car from the desired position.
+     */
+    public Car getAnyCar(int index) {
+	return theLane[index];
+    }
+
+
+    /**
      *Returns true if the last spot of the lane is free, Otherwise false, a 
      *case that will only occur if there is a queue on the lane all up there.
      *@return boolean true if last spot is free, otherwise false
@@ -77,7 +105,7 @@ public class Lane {
     /**
      *Will insert a car on the last spot of the lane.
      *@param inputCar
-     *@throws OverflowException in case the lane is full
+     *@throws OverflowException Overflow in case the lane is full
      */
     public void putLast(Car inputCar) throws OverflowException {
     	if(lastFree()){
